@@ -1,0 +1,16 @@
+export const image = {
+  background: require('./background.png'),
+  play: require('./ic_play_big.png'),
+  bgDarkTheme: require('./bg_dark_theme.png'),
+  jumpBackward: require('./ic_rewind_b.png'),
+  jumpForward: require('./ic_rewind_f.png'),
+  aim: require('./aim.png'),
+  clock: require('./clock.png'),
+  minute: require('./minute.png'),
+  hour: require('./hour.png'),
+  point: require('./point.png'),
+  icon1: require('./icon1.png'),
+  bg_home_dark: require('./bg_home_dark.png'),
+  avatar: require('./avatar.png'),
+  thumnail: require('./thumnail.png'),
+};
