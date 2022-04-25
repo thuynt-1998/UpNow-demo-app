@@ -1,113 +1,43 @@
 import React from 'react';
-import {Image, StyleSheet, ImageBackground} from 'react-native';
-import {
-  createDrawerNavigator,
-  DrawerContentScrollView,
-  DrawerItem,
-} from '@react-navigation/drawer';
+import {StyleSheet, ImageBackground} from 'react-native';
+import {createDrawerNavigator} from '@react-navigation/drawer';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import {HomeStack} from './home-stack';
-import {Text, View} from 'react-native-ui-lib';
-import {color, spacing} from '../theme';
+import {color} from '../theme';
 import {image} from '../assets/image';
 import {ReminderStack} from './reminder-stack';
 import {Screens} from './common/screens';
-import {
-  CommonActions,
-  DrawerActions,
-  useLinkBuilder,
-} from '@react-navigation/native';
-import {LinearGradientBackground} from '../screen/components';
+
 import SimpleLineIcons from 'react-native-vector-icons/SimpleLineIcons';
 import Octicons from 'react-native-vector-icons/Octicons';
-import {SafeAreaView} from 'react-native-safe-area-context';
 import Animated, {interpolateNode} from 'react-native-reanimated';
 import {ContactsStack} from './contacts-stack';
 import {MyTreaksStack} from './my-treaks-stack';
+import {LoginStack} from './login-stack';
+import {usePlayerContext} from '../context/player-context';
+import {Colors} from 'react-native-ui-lib';
+import {DrawerContent} from './common/drawer-content';
+import {SettingsStack} from './setting-stack';
+
 // screens
 
 const Drawer = createDrawerNavigator();
 
-const DrawerContent = props => {
-  const buildLink = useLinkBuilder();
-  React.useEffect(() => {
-    props?.setProgress(props?.progress);
-  }, [props]);
-
-  return (
-    <SafeAreaView style={styles.container}>
-      <View flex>
-        <Image source={image.icon1} style={styles.icon} />
-        <View style={styles.wrapper}>
-          <View style={styles.avatar}>
-            <Image source={image.avatar} style={styles.avatarImage} />
-          </View>
-          <Text style={styles.name}> James B.</Text>
-        </View>
-        <DrawerContentScrollView
-          {...props}
-          scrollEnabled={true}
-          showsVerticalScrollIndicator={false}>
-          {props.state.routes.map((route, i) => {
-            const focused = i === props.state.index;
-            const {title, drawerLabel, drawerIcon} =
-              props.descriptors[route.key].options;
-            return (
-              <LinearGradientBackground
-                key={route.key}
-                colors={
-                  focused
-                    ? [color.black25, color.transparent]
-                    : [color.transparent, color.transparent]
-                }
-                style={styles.drawerItem}>
-                <DrawerItem
-                  label={
-                    drawerLabel !== undefined
-                      ? drawerLabel
-                      : title !== undefined
-                      ? title
-                      : route.name
-                  }
-                  icon={drawerIcon}
-                  focused={focused}
-                  activeTintColor={props.activeTintColor}
-                  inactiveTintColor={props.inactiveTintColor}
-                  labelStyle={styles.label}
-                  style={{backgroundColor: color.transparent}}
-                  to={buildLink(route.name, route.params)}
-                  onPress={() => {
-                    props.navigation.dispatch({
-                      ...(focused
-                        ? DrawerActions.closeDrawer()
-                        : CommonActions.navigate(route.name)),
-                      target: props.state.key,
-                    });
-                  }}
-                />
-              </LinearGradientBackground>
-            );
-          })}
-        </DrawerContentScrollView>
-        <Text center style={styles.footer}>
-          Powered by UpNow
-        </Text>
-      </View>
-    </SafeAreaView>
-  );
-};
-function DrawerIcon(Component, iconName) {
+function DrawerIcon(Component, iconName, activeColor) {
   return ({focused}) => (
     <Component
       name={iconName}
-      color={focused ? color.wildRed : color.chateauGrey}
+      color={focused ? activeColor[0] : color.chateauGrey}
       size={20}
     />
   );
 }
 export default () => {
   const [progress, setProgress] = React.useState(new Animated.Value(0));
+  const {
+    linearGradientContext: {linearGradientColor, onChange},
+  } = usePlayerContext();
   const scale = interpolateNode(progress, {
     inputRange: [0, 1],
     outputRange: [1, 0.8],
@@ -118,7 +48,13 @@ export default () => {
   });
 
   const animatedStyle = {borderRadius, transform: [{scale}]};
-
+  React.useLayoutEffect(() => {
+    // load color for app
+    Colors.loadColors({
+      ...color,
+      linearGradient: linearGradientColor,
+    });
+  }, [linearGradientColor]);
   return (
     <ImageBackground
       source={image.bgDarkTheme}
@@ -134,13 +70,22 @@ export default () => {
         }}
         sceneContainerStyle={{backgroundColor: color.transparent}}
         drawerContent={props => (
-          <DrawerContent {...props} setProgress={setProgress} />
+          <DrawerContent
+            {...props}
+            setProgress={setProgress}
+            linearGradientColor={linearGradientColor}
+            onChange={onChange}
+          />
         )}>
         <Drawer.Screen
           name="home"
           options={{
             title: 'Home',
-            drawerIcon: DrawerIcon(MaterialCommunityIcons, 'home-outline'),
+            drawerIcon: DrawerIcon(
+              MaterialCommunityIcons,
+              'home-outline',
+              linearGradientColor,
+            ),
           }}>
           {props => (
             <Screens {...props} component={HomeStack} style={animatedStyle} />
@@ -150,7 +95,11 @@ export default () => {
           name="reminder"
           options={{
             title: 'Reminder',
-            drawerIcon: DrawerIcon(Ionicons, 'notifications-outline'),
+            drawerIcon: DrawerIcon(
+              Ionicons,
+              'notifications-outline',
+              linearGradientColor,
+            ),
           }}>
           {props => (
             <Screens
@@ -164,7 +113,11 @@ export default () => {
           name="invite"
           options={{
             title: 'Invite your friends',
-            drawerIcon: DrawerIcon(SimpleLineIcons, 'user'),
+            drawerIcon: DrawerIcon(
+              SimpleLineIcons,
+              'user',
+              linearGradientColor,
+            ),
           }}>
           {props => (
             <Screens
@@ -178,7 +131,7 @@ export default () => {
           name="welcome"
           options={{
             title: 'Welcome video',
-            drawerIcon: DrawerIcon(Octicons, 'video'),
+            drawerIcon: DrawerIcon(Octicons, 'video', linearGradientColor),
           }}>
           {props => (
             <Screens
@@ -192,7 +145,11 @@ export default () => {
           name="rewards"
           options={{
             title: 'Rewards',
-            drawerIcon: DrawerIcon(Ionicons, 'trophy-outline'),
+            drawerIcon: DrawerIcon(
+              Ionicons,
+              'trophy-outline',
+              linearGradientColor,
+            ),
           }}>
           {props => (
             <Screens
@@ -209,26 +166,27 @@ export default () => {
             drawerIcon: DrawerIcon(
               MaterialCommunityIcons,
               'help-circle-outline',
+              linearGradientColor,
             ),
           }}>
           {props => (
-            <Screens
-              {...props}
-              component={ReminderStack}
-              style={animatedStyle}
-            />
+            <Screens {...props} component={LoginStack} style={animatedStyle} />
           )}
         </Drawer.Screen>
         <Drawer.Screen
           name="settings"
           options={{
             title: 'Settings',
-            drawerIcon: DrawerIcon(Ionicons, 'settings-outline'),
+            drawerIcon: DrawerIcon(
+              Ionicons,
+              'settings-outline',
+              linearGradientColor,
+            ),
           }}>
           {props => (
             <Screens
               {...props}
-              component={ReminderStack}
+              component={SettingsStack}
               style={animatedStyle}
             />
           )}
@@ -237,7 +195,11 @@ export default () => {
           name="disclaimer"
           options={{
             title: 'Disclaimer',
-            drawerIcon: DrawerIcon(Ionicons, 'warning-outline'),
+            drawerIcon: DrawerIcon(
+              Ionicons,
+              'warning-outline',
+              linearGradientColor,
+            ),
           }}>
           {props => (
             <Screens
@@ -260,51 +222,5 @@ const styles = StyleSheet.create({
     flex: 1,
     width: '65%',
     backgroundColor: 'transparent',
-  },
-  drawerItem: {
-    borderRadius: spacing[6],
-    marginLeft: spacing[3],
-  },
-  icon: {
-    borderRadius: 60,
-    marginBottom: spacing[7],
-    height: spacing[7],
-    width: spacing[7],
-    marginTop: spacing[7],
-    marginLeft: spacing[3],
-  },
-  avatar: {
-    height: spacing[8] + spacing[2],
-    width: spacing[8] + spacing[2],
-    borderRadius: (spacing[8] + spacing[2]) / 2,
-    backgroundColor: color.black25,
-    marginBottom: spacing[4],
-  },
-  hiddenView: {
-    position: 'absolute',
-    left: -20,
-    width: '100%',
-    height: '90%',
-    top: '5%',
-  },
-  name: {
-    color: color.white,
-    fontSize: spacing[5],
-    fontWeight: 'bold',
-    marginBottom: spacing[3],
-  },
-  wrapper: {
-    marginLeft: spacing[5],
-  },
-  label: {
-    marginRight: -spacing[4],
-  },
-  footer: {
-    marginVertical: spacing[3],
-    color: color.white,
-  },
-  avatarImage: {
-    width: '100%',
-    height: '100%',
   },
 });

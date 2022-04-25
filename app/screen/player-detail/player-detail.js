@@ -13,7 +13,7 @@ export const getTime = value => {
 };
 
 export function PlayerDetailScreen() {
-  const playerContext = usePlayerContext();
+  const {playerContext} = usePlayerContext();
   const progress = useProgress();
   const route = useRoute();
   const track = route?.params?.track;

@@ -7,7 +7,7 @@ import {image} from '../../assets/image';
 import {spacing} from '../../theme';
 
 export function MiniPlayer() {
-  const playerContext = usePlayerContext();
+  const {playerContext} = usePlayerContext();
   console.log(playerContext);
   const navigation = useNavigation();
   if (playerContext.isEmpty || !playerContext.currentTrack) {

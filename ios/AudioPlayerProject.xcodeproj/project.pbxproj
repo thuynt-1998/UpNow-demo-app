@@ -42,6 +42,7 @@
 		7CA7EB9976A84FC0737B37CF /* libPods-AudioPlayerProject.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-AudioPlayerProject.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = LaunchScreen.storyboard; path = AudioPlayerProject/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		C80D2E6E261367DBB105856A /* Pods-AudioPlayerProject.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-AudioPlayerProject.release.xcconfig"; path = "Target Support Files/Pods-AudioPlayerProject/Pods-AudioPlayerProject.release.xcconfig"; sourceTree = "<group>"; };
+		D875CE74281653140058C60C /* AudioPlayerProject.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; name = AudioPlayerProject.entitlements; path = AudioPlayerProject/AudioPlayerProject.entitlements; sourceTree = "<group>"; };
 		ED297162215061F000B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = System/Library/Frameworks/JavaScriptCore.framework; sourceTree = SDKROOT; };
 		F0D8AEC203BA28DEAD27DEBE /* Pods-AudioPlayerProject-AudioPlayerProjectTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-AudioPlayerProject-AudioPlayerProjectTests.release.xcconfig"; path = "Target Support Files/Pods-AudioPlayerProject-AudioPlayerProjectTests/Pods-AudioPlayerProject-AudioPlayerProjectTests.release.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -86,6 +87,7 @@
 		13B07FAE1A68108700A75B9A /* AudioPlayerProject */ = {
 			isa = PBXGroup;
 			children = (
+				D875CE74281653140058C60C /* AudioPlayerProject.entitlements */,
 				13B07FAF1A68108700A75B9A /* AppDelegate.h */,
 				13B07FB01A68108700A75B9A /* AppDelegate.m */,
 				13B07FB51A68108700A75B9A /* Images.xcassets */,
@@ -491,6 +493,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_ENTITLEMENTS = AudioPlayerProject/AudioPlayerProject.entitlements;
 				CURRENT_PROJECT_VERSION = 1;
 				ENABLE_BITCODE = NO;
 				INFOPLIST_FILE = AudioPlayerProject/Info.plist;
@@ -517,6 +520,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_ENTITLEMENTS = AudioPlayerProject/AudioPlayerProject.entitlements;
 				CURRENT_PROJECT_VERSION = 1;
 				INFOPLIST_FILE = AudioPlayerProject/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (

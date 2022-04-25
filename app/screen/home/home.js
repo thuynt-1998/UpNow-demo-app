@@ -2,12 +2,20 @@ import React from 'react';
 import {Text, TouchableOpacity, View} from 'react-native-ui-lib';
 import {StyleSheet, ImageBackground} from 'react-native';
 import {useNavigation} from '@react-navigation/native';
-import {Chip, Screen, SearchButton, SearchHeader} from '../components';
+import {
+  Chip,
+  MenuButton,
+  Screen,
+  SearchButton,
+  SearchHeader,
+} from '../components';
 import {image} from '../../assets/image';
 import {autocompleteInputData, TypeList} from './data1';
 import {color, size, spacing} from '../../theme';
+import Ionicons from 'react-native-vector-icons/Ionicons';
+import {useIsDrawerOpen} from '@react-navigation/drawer';
 
-const track = {
+export const track = {
   id: '1',
   url: 'https://player.vimeo.com/external/523679650.sd.mp4?s=7a4a273f0d1e7ef5d3ba9050d5c7f5b5a26e376c&profile_id=164',
   title: 'Test Sound #1',
@@ -21,6 +29,8 @@ export function HomeScreen() {
   const [searchText, setSearchText] = React.useState('');
   const [isSearchOpen, setSearchOpen] = React.useState(false);
   const [searchResults, setResults] = React.useState(autocompleteInputData);
+  const isDrawerOpen = useIsDrawerOpen();
+
   const onSearchChange = React.useCallback(text => {
     setSearchText(text);
     setResults(
@@ -29,6 +39,15 @@ export function HomeScreen() {
         : autocompleteInputData,
     );
   }, []);
+  React.useEffect(() => {
+    isDrawerOpen && onSearchClose?.();
+  }, [isDrawerOpen, onSearchClose]);
+
+  const onSearchClose = React.useCallback(() => {
+    onSearchChange('');
+    setSearchOpen(false);
+  }, [onSearchChange]);
+
   React.useEffect(() => {
     navigation.setOptions({
       title: 'Home',
@@ -41,18 +60,33 @@ export function HomeScreen() {
               <SearchHeader
                 onSearchChange={onSearchChange}
                 searchText={searchText}
-                onSearchClose={() => {
-                  onSearchChange('');
-                  setSearchOpen(false);
-                }}
-                isSearchOpen={isSearchOpen}
+                isShow={isSearchOpen}
                 data={searchResults}
+                leftComponent={<MenuButton />}
+                onItemPress={() => {
+                  navigation.navigate('detail', {track});
+                  onSearchClose();
+                }}
+                rightComponent={
+                  <TouchableOpacity
+                    style={styles.closeButton}
+                    onPress={onSearchClose}>
+                    <Ionicons name="close" color={color.white} size={30} />
+                  </TouchableOpacity>
+                }
               />
             ),
           }
         : {header: undefined}),
     });
-  }, [isSearchOpen, navigation, searchResults, searchText, onSearchChange]);
+  }, [
+    isSearchOpen,
+    navigation,
+    searchResults,
+    searchText,
+    onSearchChange,
+    onSearchClose,
+  ]);
 
   const [currentType, setCurrentType] = React.useState(TypeList[0].value);
 
@@ -133,5 +167,8 @@ const styles = StyleSheet.create({
   item: {
     width: size.screen.width / 2 - spacing[3] * 2,
     height: size.screen.width / 2,
+  },
+  closeButton: {
+    paddingHorizontal: spacing[4],
   },
 });

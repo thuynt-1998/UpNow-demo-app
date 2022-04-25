@@ -9,7 +9,6 @@ import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import {useLayout} from '../../untils/useLayout';
 import {RootSiblingPortal} from 'react-native-root-siblings';
-import {useIsDrawerOpen} from '@react-navigation/drawer';
 
 export function LeftButton() {
   const navigation = useNavigation();
@@ -65,48 +64,52 @@ export function CircleBackButton({style, colorText}) {
 export const SearchHeader = ({
   onSearchChange,
   searchText,
-  onSearchClose,
   data,
-  isSearchOpen,
+  isShow,
+  renderInput,
+  leftComponent,
+  rightComponent,
+  onItemPress,
+  inputContainerStyle,
+  dropdownStyle,
+  dropdownItem,
+  containerStyle,
   ...flatListProps
 }) => {
   const {ref, onLayout, width, height, pageX, pageY} = useLayout();
-  const navigation = useNavigation();
-  const isDrawerOpen = useIsDrawerOpen();
-  React.useEffect(() => {
-    isDrawerOpen && onSearchClose();
-  }, [isDrawerOpen, onSearchClose, ref]);
 
   return (
-    <View>
-      <View row centerV style={{marginTop: spacing[5]}}>
-        <MenuButton />
+    <View style={[styles.searchContainer, containerStyle]}>
+      <View row centerV>
+        {React.isValidElement(leftComponent) && leftComponent}
         <View
           ref={ref}
           row
           centerV
-          style={styles.searchBar}
+          style={[styles.searchBar, inputContainerStyle]}
           flex
           onLayout={onLayout}>
-          <FontAwesome name="search" color={color.white} size={20} />
-          <TextInput
-            value={searchText}
-            onChangeText={onSearchChange}
-            style={styles.inputContainer}
-            autoFocus
-          />
-          <TouchableOpacity
-            style={styles.clearSearchIcon}
-            center
-            onPress={() => onSearchChange('')}>
-            <Ionicons name="close" size={14} />
-          </TouchableOpacity>
+          {renderInput?.(onLayout) || (
+            <>
+              <FontAwesome name="search" color={color.white} size={20} />
+              <TextInput
+                value={searchText}
+                onChangeText={onSearchChange}
+                style={styles.inputContainer}
+                autoFocus
+              />
+              <TouchableOpacity
+                style={styles.clearSearchIcon}
+                center
+                onPress={() => onSearchChange?.('')}>
+                <Ionicons name="close" size={14} />
+              </TouchableOpacity>
+            </>
+          )}
         </View>
-        <TouchableOpacity style={styles.button} onPress={onSearchClose}>
-          <Ionicons name="close" color={color.white} size={30} />
-        </TouchableOpacity>
+        {React.isValidElement(rightComponent) && rightComponent}
       </View>
-      {isSearchOpen && data?.length > 0 && (
+      {isShow && data?.length > 0 && (
         <RootSiblingPortal>
           <View
             style={[
@@ -120,16 +123,18 @@ export const SearchHeader = ({
             <FlatList
               data={data}
               keyExtractor={(a, index) => index.toString()}
-              renderItem={({item}) => (
-                <TouchableOpacity
-                  centerV
-                  style={styles.suggestionItem}
-                  onPress={() => navigation.navigate('detail')}>
-                  <Text color={color.white}>{item?.label}</Text>
-                </TouchableOpacity>
-              )}
+              renderItem={({item}) =>
+                dropdownItem?.(item) || (
+                  <TouchableOpacity
+                    centerV
+                    style={styles.suggestionItem}
+                    onPress={() => onItemPress(item)}>
+                    <Text color={color.white}>{item?.label}</Text>
+                  </TouchableOpacity>
+                )
+              }
               keyboardShouldPersistTaps="handled"
-              style={styles.list}
+              style={[styles.list, dropdownStyle]}
               {...flatListProps}
             />
           </View>
@@ -148,6 +153,11 @@ export const HeaderStyle = {
 const styles = StyleSheet.create({
   container: {
     marginHorizontal: spacing[3],
+  },
+  searchContainer: {
+    marginTop: spacing[5],
+    width: '100%',
+    zIndex: 2000,
   },
   button: {
     paddingHorizontal: spacing[4],
@@ -186,7 +196,6 @@ const styles = StyleSheet.create({
   },
   suggestions: {
     position: 'absolute',
-    backgroundColor: 'red',
   },
   list: {
     left: 0,

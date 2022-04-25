@@ -1,12 +1,12 @@
 import React from 'react';
 import {createStackNavigator} from '@react-navigation/stack';
-import {ContactListScreen, Modal} from '../screen';
-import {HeaderStyle, MenuButton} from '../screen/components';
+import {SettingsScreen} from '../screen';
 import {color} from '../theme';
+import {MenuButton} from '../screen/components';
 
 const Stack = createStackNavigator();
 
-export function ContactsStack() {
+export function SettingsStack() {
   return (
     <>
       <Stack.Navigator
@@ -16,16 +16,12 @@ export function ContactsStack() {
           cardStyle: {
             backgroundColor: color.transparent,
           },
-          gestureEnabled: true,
-          cardOverlayEnabled: true,
-        }}
-        mode="modal">
+        }}>
         <Stack.Screen
-          name="contacts"
-          component={ContactListScreen}
-          options={HeaderStyle}
+          name="settings"
+          component={SettingsScreen}
+          options={{title: null}}
         />
-        <Stack.Screen name="modal" component={Modal} options={HeaderStyle} />
       </Stack.Navigator>
     </>
   );

@@ -1,5 +1,6 @@
 import React from 'react';
 import TrackPlayer, {State} from 'react-native-track-player';
+import {color} from '../theme';
 
 export const PlayerContext = React.createContext({
   isPlaying: false,
@@ -14,6 +15,10 @@ export const PlayerContext = React.createContext({
 export function PlayerContextProvider(props) {
   const [playerState, setPlayerState] = React.useState(null);
   const [currentTrack, setCurrentTrack] = React.useState(null);
+  const [linearGradientColor, setColor] = React.useState([
+    color.wildRed,
+    color.roseRed,
+  ]);
   React.useEffect(() => {
     const listener = TrackPlayer.addEventListener(
       'playback-state',
@@ -57,21 +62,38 @@ export function PlayerContextProvider(props) {
   const seekTo = React.useCallback(number => {
     TrackPlayer.seekTo(number);
   }, []);
-
+  const onLinearGradientColorChange = React.useCallback(color => {
+    setColor(color);
+  }, []);
   const value = React.useMemo(
     () => ({
-      isPlaying:
-        playerState === State.Playing || playerState === State.Buffering,
-      isPaused: playerState === State.Paused,
-      isStopped: playerState === State.Stopped,
-      isEmpty: playerState === null,
+      playerContext: {
+        isPlaying:
+          playerState === State.Playing || playerState === State.Buffering,
+        isPaused: playerState === State.Paused,
+        isStopped: playerState === State.Stopped,
+        isEmpty: playerState === null,
+        currentTrack,
+        pause,
+        play,
+        seekTo,
+        stop,
+      },
+      linearGradientContext: {
+        linearGradientColor,
+        onChange: onLinearGradientColorChange,
+      },
+    }),
+    [
       currentTrack,
+      linearGradientColor,
+      onLinearGradientColorChange,
       pause,
       play,
+      playerState,
       seekTo,
       stop,
-    }),
-    [currentTrack, pause, play, playerState, seekTo, stop],
+    ],
   );
   return (
     <PlayerContext.Provider value={value}>

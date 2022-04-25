@@ -111,7 +111,7 @@ export function ContactListScreen() {
       //     />
       //   </View>
       // }
-    >
+      statusBarProps={{barStyle: 'dark-content'}}>
       <View style={[styles.headerContainer, {paddingTop: headerHeight}]}>
         <Text style={styles.headerText}>All Contacts</Text>
       </View>
@@ -127,7 +127,8 @@ export function ContactListScreen() {
                   </Text>
                   <TouchableOpacity
                     onPress={() =>
-                      Contacts.viewExistingContact({recordID: item?.recordID})
+                      // Contacts.viewExistingContact({recordID: item?.recordID})
+                      navigation.navigate('modal')
                     }
                     style={styles.inviteContainer}>
                     <Text color={color.white}>Invite</Text>
