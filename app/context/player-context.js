@@ -1,4 +1,5 @@
 import React from 'react';
+import {LoginManager} from 'react-native-fbsdk';
 import TrackPlayer, {State} from 'react-native-track-player';
 import {color} from '../theme';
 
@@ -19,6 +20,7 @@ export function PlayerContextProvider(props) {
     color.wildRed,
     color.roseRed,
   ]);
+  const [accessToken, setToken] = React.useState(null);
   React.useEffect(() => {
     const listener = TrackPlayer.addEventListener(
       'playback-state',
@@ -65,6 +67,15 @@ export function PlayerContextProvider(props) {
   const onLinearGradientColorChange = React.useCallback(color => {
     setColor(color);
   }, []);
+
+  const setAccessToken = React.useCallback(token => {
+    console.log(token);
+    setToken(token);
+  }, []);
+  const onLogout = React.useCallback(() => {
+    LoginManager.logOut();
+    setToken(null);
+  }, []);
   const value = React.useMemo(
     () => ({
       playerContext: {
@@ -83,8 +94,14 @@ export function PlayerContextProvider(props) {
         linearGradientColor,
         onChange: onLinearGradientColorChange,
       },
+      login: {
+        accessToken,
+        setAccessToken,
+        onLogout,
+      },
     }),
     [
+      accessToken,
       currentTrack,
       linearGradientColor,
       onLinearGradientColorChange,
@@ -92,7 +109,9 @@ export function PlayerContextProvider(props) {
       play,
       playerState,
       seekTo,
+      setAccessToken,
       stop,
+      onLogout,
     ],
   );
   return (

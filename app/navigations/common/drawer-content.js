@@ -7,7 +7,7 @@ import React from 'react';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import {StyleSheet} from 'react-native';
 import {LinearGradientBackground} from '../../screen/components';
-import {Colors, Image, Text, View} from 'react-native-ui-lib';
+import {Colors, Image, Text, TouchableOpacity, View} from 'react-native-ui-lib';
 import {spacing, color} from '../../theme';
 import {image} from '../../assets/image';
 import {
@@ -15,6 +15,7 @@ import {
   DrawerItem,
   useIsDrawerOpen,
 } from '@react-navigation/drawer';
+import {usePlayerContext} from '../../context/player-context';
 
 export function DrawerContent(props) {
   const buildLink = useLinkBuilder();
@@ -22,7 +23,7 @@ export function DrawerContent(props) {
   React.useEffect(() => {
     props?.setProgress(props?.progress);
   }, [isDrawerOpen, props]);
-
+  const {login} = usePlayerContext();
   return (
     <SafeAreaView style={styles.container}>
       <View flex>
@@ -80,6 +81,9 @@ export function DrawerContent(props) {
             );
           })}
         </DrawerContentScrollView>
+        <TouchableOpacity center onPress={login.onLogout}>
+          <Text style={styles.footer}>Log out</Text>
+        </TouchableOpacity>
         <Text center style={styles.footer}>
           Powered by UpNow
         </Text>

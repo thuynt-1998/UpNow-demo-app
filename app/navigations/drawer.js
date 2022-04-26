@@ -14,7 +14,6 @@ import Octicons from 'react-native-vector-icons/Octicons';
 import Animated, {interpolateNode} from 'react-native-reanimated';
 import {ContactsStack} from './contacts-stack';
 import {MyTreaksStack} from './my-treaks-stack';
-import {LoginStack} from './login-stack';
 import {usePlayerContext} from '../context/player-context';
 import {Colors} from 'react-native-ui-lib';
 import {DrawerContent} from './common/drawer-content';
@@ -33,7 +32,7 @@ function DrawerIcon(Component, iconName, activeColor) {
     />
   );
 }
-export default () => {
+export function MainDrawer() {
   const [progress, setProgress] = React.useState(new Animated.Value(0));
   const {
     linearGradientContext: {linearGradientColor, onChange},
@@ -170,7 +169,11 @@ export default () => {
             ),
           }}>
           {props => (
-            <Screens {...props} component={LoginStack} style={animatedStyle} />
+            <Screens
+              {...props}
+              component={ReminderStack}
+              style={animatedStyle}
+            />
           )}
         </Drawer.Screen>
         <Drawer.Screen
@@ -212,7 +215,7 @@ export default () => {
       </Drawer.Navigator>
     </ImageBackground>
   );
-};
+}
 
 const styles = StyleSheet.create({
   container: {

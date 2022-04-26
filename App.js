@@ -9,14 +9,13 @@
 import React from 'react';
 
 import {NavigationContainer} from '@react-navigation/native';
-import {RootStack} from './app/navigations/root-stack';
 import TrackPlayer, {Capability} from 'react-native-track-player';
 import {PlayerContextProvider} from './app/context/player-context';
 import {LogBox} from 'react-native';
 import {SafeAreaProvider} from 'react-native-safe-area-context';
-import Drawer from './app/navigations/drawer';
-LogBox.ignoreLogs(['Reanimated 2']);
 import {RootSiblingParent} from 'react-native-root-siblings';
+import {RootStack} from './app/navigations/root-stack';
+LogBox.ignoreLogs(['Reanimated 2']);
 
 const App = () => {
   React.useEffect(() => {
@@ -46,8 +45,7 @@ const App = () => {
       <RootSiblingParent>
         <SafeAreaProvider>
           <NavigationContainer>
-            {/* <RootStack /> */}
-            <Drawer />
+            <RootStack />
           </NavigationContainer>
         </SafeAreaProvider>
       </RootSiblingParent>

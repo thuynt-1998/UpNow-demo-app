@@ -1,3 +1,6 @@
 <resources>
     <string name="app_name">AudioPlayerProject</string>
+    <string name="facebook_app_id">738498183924239</string>
+    <string name="fb_login_protocol_scheme">fb738498183924239</string>
+    <string name="facebook_client_token">734ba1c3cc95a93290b56b548e2805fa</string>
 </resources>

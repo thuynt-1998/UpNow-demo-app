@@ -64,6 +64,29 @@
 	<array>
 		<string>armv7</string>
 	</array>
+
+	<key>CFBundleURLTypes</key>
+	<array>
+	<dict>
+	<key>CFBundleURLSchemes</key>
+	<array>
+		<string>fb738498183924239</string>
+	</array>
+	</dict>
+	</array>
+	<key>FacebookAppID</key>
+	<string>738498183924239</string>
+	<key>FacebookClientToken</key>
+	<string>734ba1c3cc95a93290b56b548e2805fa</string>
+	<key>FacebookDisplayName</key>
+	<string>AudioPlayerProject</string>
+
+	<key>LSApplicationQueriesSchemes</key>
+	<array>
+	<string>fbapi</string>
+	<string>fb-messenger-share-api</string>
+	</array>
+	
 	<key>UISupportedInterfaceOrientations</key>
 	<array>
 		<string>UIInterfaceOrientationPortrait</string>

@@ -4,13 +4,19 @@ import {useNavigation} from '@react-navigation/native';
 import {Screen} from '../components';
 import {image} from '../../assets/image';
 import {StyleSheet, Platform} from 'react-native';
-import {size, spacing, color} from '../../theme';
-import FontAwesome from 'react-native-vector-icons/FontAwesome';
+import {spacing, color} from '../../theme';
 import EvilIcons from 'react-native-vector-icons/EvilIcons';
+// import {appleAuthAndroid} from '@invertase/react-native-apple-authentication';
 import {
-  appleAuth,
-  appleAuthAndroid,
-} from '@invertase/react-native-apple-authentication';
+  // LoginButton,
+  AccessToken,
+  LoginManager,
+  // ShareDialog,
+  GraphRequest,
+  GraphRequestManager,
+} from 'react-native-fbsdk';
+import {AppleButton} from './components/AppleButton';
+import {usePlayerContext} from '../../context/player-context';
 
 export function LoginScreen() {
   const navigation = useNavigation();
@@ -19,26 +25,70 @@ export function LoginScreen() {
       title: null,
     });
   }, [navigation]);
-  React.useEffect(() => {
-    // onCredentialRevoked returns a function that will remove the event listener. useEffect will call this function when the component unmounts
-    return appleAuth.onCredentialRevoked(async () => {
-      console.warn(
-        'If this function executes, User Credentials have been Revoked',
-      );
-    });
-  }, []);
-  const onAppleButtonPress = React.useCallback(async () => {
-    const appleAuthRequestResponse = await appleAuth.performRequest({
-      requestedOperation: appleAuth.Operation.LOGIN,
-      requestedScopes: [appleAuth.Scope.EMAIL, appleAuth.Scope.FULL_NAME],
-    });
-    const credentialState = await appleAuth.getCredentialStateForUser(
-      appleAuthRequestResponse.user,
+  const {login} = usePlayerContext();
+
+  const onFacebookActions = React.useCallback(() => {
+    // const shareLinkContent = {
+    //   contentType: 'link',
+    //   contentUrl: 'https://facebook.com',
+    //   contentDescription: 'Wow, check out this great site!',
+    // };
+    // ShareDialog.canShow(shareLinkContent)
+    //   .then(function (canShow) {
+    //     if (canShow) {
+    //       return ShareDialog.show(shareLinkContent);
+    //     }
+    //   })
+    //   .then(
+    //     function (result) {
+    //       if (result.isCancelled) {
+    //         console.log('Share cancelled');
+    //       } else {
+    //         console.log('Share success with postId: ' + result.postId);
+    //       }
+    //     },
+    //     function (error) {
+    //       console.log('Share fail with error: ' + error);
+    //     },
+    //   );
+
+    const infoRequest = new GraphRequest(
+      '/me',
+      {
+        parameters: {
+          fields: {
+            string: 'email,first_name,last_name,friends',
+          },
+        },
+      },
+      (err, res) => {
+        console.log(err, res);
+      },
     );
-    if (credentialState === appleAuth.State.AUTHORIZED) {
-    }
+    new GraphRequestManager().addRequest(infoRequest).start();
   }, []);
 
+  const onLoginFacebook = React.useCallback(() => {
+    LoginManager.logInWithPermissions(['public_profile', 'email']).then(
+      function (result) {
+        if (result.isCancelled) {
+          console.log('Login cancelled');
+        } else {
+          console.log(result, '<<<<<');
+          AccessToken.getCurrentAccessToken().then(
+            data => {
+              if (data?.accessToken) {
+                login?.setAccessToken(data);
+              }
+            }, //Refresh it every time
+          );
+        }
+      },
+      function (error) {
+        console.log('Login fail with error: ' + error);
+      },
+    );
+  }, [login]);
   return (
     <Screen source={image.bg_home_dark}>
       <View style={styles.container}>
@@ -54,7 +104,8 @@ export function LoginScreen() {
         <TouchableOpacity
           style={styles.buttonWrapper}
           centerV
-          backgroundColor={color.marinerBlue}>
+          backgroundColor={color.marinerBlue}
+          onPress={onLoginFacebook}>
           <View style={styles.facebookWrapper}>
             <EvilIcons
               name="sc-facebook"
@@ -64,17 +115,10 @@ export function LoginScreen() {
           </View>
           <Text style={styles.text}>Login with Facebook</Text>
         </TouchableOpacity>
-        {((appleAuthAndroid.isSupported && Platform.OS === 'android') ||
-          Platform.OS === 'ios') && (
-          <TouchableOpacity
-            style={styles.buttonWrapper}
-            centerV
-            backgroundColor={color.black}
-            onPress={onAppleButtonPress}>
-            <FontAwesome name="apple" style={styles.appleIcon} />
-            <Text style={styles.text}>Login with Apple</Text>
-          </TouchableOpacity>
-        )}
+        {
+          // (appleAuthAndroid?.isSupported && Platform.OS === 'android') ||
+          Platform.OS === 'ios' && <AppleButton />
+        }
       </View>
     </Screen>
   );
