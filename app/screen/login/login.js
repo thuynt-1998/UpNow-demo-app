@@ -3,15 +3,12 @@ import {Text, TouchableOpacity, View} from 'react-native-ui-lib';
 import {useNavigation} from '@react-navigation/native';
 import {Screen} from '../components';
 import {image} from '../../assets/image';
-import {StyleSheet, Platform} from 'react-native';
+import {StyleSheet} from 'react-native';
 import {spacing, color} from '../../theme';
 import EvilIcons from 'react-native-vector-icons/EvilIcons';
-// import {appleAuthAndroid} from '@invertase/react-native-apple-authentication';
 import {
-  // LoginButton,
   AccessToken,
   LoginManager,
-  // ShareDialog,
   GraphRequest,
   GraphRequestManager,
 } from 'react-native-fbsdk';
@@ -74,14 +71,15 @@ export function LoginScreen() {
         if (result.isCancelled) {
           console.log('Login cancelled');
         } else {
-          console.log(result, '<<<<<');
-          AccessToken.getCurrentAccessToken().then(
-            data => {
-              if (data?.accessToken) {
-                login?.setAccessToken(data);
-              }
-            }, //Refresh it every time
-          );
+          AccessToken.getCurrentAccessToken().then(data => {
+            if (data?.accessToken) {
+              login?.onAuthChange({
+                accessToken: data?.accessToken,
+                type: 'fb',
+                ...data,
+              });
+            }
+          });
         }
       },
       function (error) {
@@ -115,10 +113,7 @@ export function LoginScreen() {
           </View>
           <Text style={styles.text}>Login with Facebook</Text>
         </TouchableOpacity>
-        {
-          // (appleAuthAndroid?.isSupported && Platform.OS === 'android') ||
-          Platform.OS === 'ios' && <AppleButton />
-        }
+        <AppleButton />
       </View>
     </Screen>
   );

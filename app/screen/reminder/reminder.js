@@ -35,19 +35,22 @@ export function ReminderScreen() {
   return (
     <ImageBackground source={image.bgDarkTheme} style={styles.container}>
       <Clock minutes={value.minutes} hour={value.hour} />
-
-      <RNDateTimePicker
-        value={parse(`${value?.hour}:${value?.minutes}`, 'HH:mm', new Date())}
-        display="spinner"
-        mode="time"
-        onChange={(value, date) => {
-          setValue({
-            hour: getHour(new Date(date).getHours()),
-            minutes: new Date(date).getMinutes(),
-            moment: new Date(date).getHours() > 11 ? 'PM' : 'AM',
-          });
-        }}
-      />
+      {Platform.OS === 'anroid' ? (
+        <Picker onChange={onValueChange} value={value} />
+      ) : (
+        <RNDateTimePicker
+          value={parse(`${value?.hour}:${value?.minutes}`, 'HH:mm', new Date())}
+          display="spinner"
+          mode="time"
+          onChange={(value, date) => {
+            setValue({
+              hour: getHour(new Date(date).getHours()),
+              minutes: new Date(date).getMinutes(),
+              moment: new Date(date).getHours() > 11 ? 'PM' : 'AM',
+            });
+          }}
+        />
+      )}
     </ImageBackground>
   );
 }

@@ -20,7 +20,7 @@ export function PlayerContextProvider(props) {
     color.wildRed,
     color.roseRed,
   ]);
-  const [accessToken, setToken] = React.useState(null);
+  const [auth, setAuth] = React.useState(null);
   React.useEffect(() => {
     const listener = TrackPlayer.addEventListener(
       'playback-state',
@@ -68,14 +68,15 @@ export function PlayerContextProvider(props) {
     setColor(color);
   }, []);
 
-  const setAccessToken = React.useCallback(token => {
-    console.log(token);
-    setToken(token);
+  const onAuthChange = React.useCallback(({accessToken, type, ...data}) => {
+    setAuth({accessToken, type, ...data});
   }, []);
   const onLogout = React.useCallback(() => {
-    LoginManager.logOut();
-    setToken(null);
-  }, []);
+    if (auth?.type === 'fb') {
+      LoginManager.logOut();
+    }
+    setAuth(null);
+  }, [auth?.type]);
   const value = React.useMemo(
     () => ({
       playerContext: {
@@ -95,13 +96,13 @@ export function PlayerContextProvider(props) {
         onChange: onLinearGradientColorChange,
       },
       login: {
-        accessToken,
-        setAccessToken,
+        auth,
+        onAuthChange,
         onLogout,
       },
     }),
     [
-      accessToken,
+      auth,
       currentTrack,
       linearGradientColor,
       onLinearGradientColorChange,
@@ -109,7 +110,7 @@ export function PlayerContextProvider(props) {
       play,
       playerState,
       seekTo,
-      setAccessToken,
+      onAuthChange,
       stop,
       onLogout,
     ],

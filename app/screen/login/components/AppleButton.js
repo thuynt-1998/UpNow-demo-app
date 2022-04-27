@@ -8,9 +8,12 @@ import {
 import 'react-native-get-random-values';
 import {v4 as uuid} from 'uuid';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
-import {StyleSheet, Platform} from 'react-native';
+import {StyleSheet, Platform, Alert} from 'react-native';
+import {usePlayerContext} from '../../../context/player-context';
 
 export function AppleButton() {
+  const {login} = usePlayerContext();
+
   React.useEffect(() => {
     // onCredentialRevoked returns a function that will remove the event listener. useEffect will call this function when the component unmounts
     return Platform.OS === 'ios'
@@ -34,8 +37,12 @@ export function AppleButton() {
     console.log(credentialState, '>>>>', appleAuthRequestResponse);
     if (credentialState === appleAuth.State.AUTHORIZED) {
       console.log('Login is successful');
+      login?.onAuthChange({
+        accessToken: appleAuthRequestResponse?.identityToken,
+        type: 'apple',
+      });
     }
-  }, []);
+  }, [login]);
 
   const onAppleButtonAndroidPress = React.useCallback(async () => {
     const rawNonce = uuid();
@@ -67,6 +74,11 @@ export function AppleButton() {
     // const response = await appleAuthAndroid.signIn();
     // console.log(response, '<<<<<');
   }, []);
+
+  if (Platform.OS === 'android') {
+    return null;
+  }
+
   return (
     <TouchableOpacity
       style={styles.buttonWrapper}

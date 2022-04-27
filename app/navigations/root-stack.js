@@ -11,7 +11,7 @@ export function RootStack() {
   const {login} = usePlayerContext();
   return (
     <Stack.Navigator>
-      {login?.accessToken ? (
+      {login?.auth?.accessToken ? (
         <Stack.Screen
           name="main"
           component={MainDrawer}
